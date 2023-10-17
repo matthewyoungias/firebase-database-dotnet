@@ -1,5 +1,5 @@
 using System.Net.Http;
-
+using System.Net;
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Firebase.Database.Tests")]
 
 namespace Firebase.Database
@@ -20,23 +20,42 @@ namespace Firebase.Database
         internal readonly FirebaseOptions Options;
 
         private readonly string baseUrl;
+        
+        internal readonly WebProxy prox;
+        internal readonly bool isProxy = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FirebaseClient"/> class.
         /// </summary>
         /// <param name="baseUrl"> The base url. </param>
         /// <param name="options"> The Firebase options. </param>  
-        public FirebaseClient(string baseUrl, FirebaseOptions options = null)
+        /// <param name="prox"> Web Proxy settings. </param>
+        
+        public FirebaseClient(WebProxy Prox, string baseUrl, FirebaseOptions options = null)
         {
-            this.Options = options ?? new FirebaseOptions();
-            this.HttpClient = Options.HttpClientFactory.GetHttpClient(null);
+            if (prox != null)
+            {
+                isProxy = true;
+                prox = Prox;
 
+            }
+            else
+            {
+                isProxy = false;
+                prox = null;
+            }
+            this.Options = options ?? new FirebaseOptions();
+            this.HttpClient = Options.HttpClientFactory.GetHttpClient(null, prox);
+            
+            
             this.baseUrl = baseUrl;
 
             if (!this.baseUrl.EndsWith("/"))
             {
                 this.baseUrl += "/";
             }
+
+            this.isProxy = isProxy;
         }
 
         /// <summary>

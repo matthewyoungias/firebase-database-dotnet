@@ -32,6 +32,7 @@ namespace Firebase.Database.Query
         protected FirebaseQuery(FirebaseQuery parent, FirebaseClient client)
         {
             this.Client = client;
+            
             this.Parent = parent;
         }
 
@@ -317,7 +318,7 @@ namespace Firebase.Database.Query
         {
             if (this.client == null)
             {
-                this.client = Client.Options.HttpClientFactory.GetHttpClient(timeout ?? DEFAULT_HTTP_CLIENT_TIMEOUT);
+                this.client = Client.Options.HttpClientFactory.GetHttpClient(timeout ?? DEFAULT_HTTP_CLIENT_TIMEOUT, this.Client.prox);
             }
 
             return this.client.GetHttpClient();
